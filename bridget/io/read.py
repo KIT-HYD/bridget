@@ -47,15 +47,12 @@ def read_QA_QC_file(fname, strict=True):
 def _reader(fname, type_str, strict=True, read_kwargs={}):
     # read the file
     data = pd.read_csv(fname, sep=',', header=None, index_col=None, **read_kwargs)
-    # drop empty columns
-    data.dropna(axis=1, how='all', inplace=True)
-
     # set the column names
     data.columns = get_header(type_str)
-
     # strict mode
     if strict:
         assert (get_header(type_str) == data.columns).all()
-
+    # raw data includes an empty last column, delete it
+    data = data.drop('na_column', axis=1)
     # return
     return data
