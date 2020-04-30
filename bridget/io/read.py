@@ -54,5 +54,9 @@ def _reader(fname, type_str, strict=True, read_kwargs={}):
         assert (get_header(type_str) == data.columns).all()
     # raw data includes an empty last column, delete it
     data = data.drop('na_column', axis=1)
+    # convert datetime columns to datetime data type
+    df['t_begin'] =  pd.to_datetime(df['t_begin'], format='%d.%m.%Y %H:%M')
+    df['t_end'] =  pd.to_datetime(df['t_end'], format='%d.%m.%Y %H:%M')
+    df['t_mid'] =  pd.to_datetime(df['t_mid'], format='%d.%m.%Y %H:%M')
     # return
     return data
