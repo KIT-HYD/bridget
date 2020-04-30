@@ -59,3 +59,4 @@ noise_ustar,noise error for ustar,%
 noise_hts,noise error for HTs,%
 noise_lve,noise error for LvE,%
 noise_co2,noise error for Cov(w'CO2')/NEE,%
+na_column,empty_column,delete_this_column_in_read_function
