@@ -15,4 +15,13 @@ Examples
 
 """
 
+def footprint():
+    """
+    Top-level footprint function. 
 
+    If more than one footprint method is implemented, these should go 
+    into functions in this module. This function then has a **string** 
+    parameter to switch the method.
+    
+    """
+    pass
