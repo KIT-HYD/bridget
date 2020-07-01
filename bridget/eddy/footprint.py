@@ -15,7 +15,7 @@ Examples
 
 """
 
-def footprint(height = 2, t_air, a, p, wndspeed, cov_uw, cov_vw, var_v, method = "Kormann_Meixner"):
+def footprint(t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, z = 2.0, method = "Kormann_Meixner"):
     """
     Top-level footprint function.
 
@@ -23,14 +23,26 @@ def footprint(height = 2, t_air, a, p, wndspeed, cov_uw, cov_vw, var_v, method =
     into functions in this module. This function then has a **string**
     parameter to switch the method.
 
-    Parameters:
-        - height = measurement height (z) [m]
-        - wndspeed = horizontal wind component for the direction in which the sonic is oriented (u) [m/s]
-        - cov_uw = Covariance between the wind components u and w
-        - cov_vw = Covariance between the wind components v and w
-        - var_v = variance of v (horizontal wind component for the direction rectangular to the orientation of the sonic
-        - t_air = air temperature [°C]
-        - a = absolute humidity [g/m3]
-        - p = air pressure [hPa]
+    Parameters
+    ----------
+    z : float
+        measurement height [m]
+    u : list
+        horizontal wind component for the direction in which the sonic is oriented [m/s].
+    cov_uw : list
+        Covariance between the wind components u and w [m2/s2].
+    cov_vw : list
+        Covariance between the wind components v and w [m2/s2].
+    cov_wt : list
+        Covariance between the wind components w and temperature [(m*°C)/s].
+    var_v : list
+        variance of v (horizontal wind component for the direction rectangular to the orientation of the sonic) [m/s].
+    t_air : list
+        air temperature [°C].
+    a : list
+        absolute humidity [g/m3].
+    p : list
+        air pressure [hPa].
     """
-    pass
+
+    raise NotImplementedError
