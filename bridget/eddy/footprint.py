@@ -202,6 +202,7 @@ def sensible_heat_calc(rho, c_p, cov_wt):
         sensible heat flux [W/m2].
 
     References
+    Soltani, M., Mauder, M., Laux, P. et al. Turbulent flux variability and energy balance closure in the TERENO prealpine observatory: a hydrometeorological data analysis. Theor Appl Climatol 133, 937–956 (2018). https://doi.org/10.1007/s00704-017-2235-1
     ----------
 
     """
