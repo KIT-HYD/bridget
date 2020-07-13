@@ -251,7 +251,7 @@ def footprint(t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, z = 2.0, method = "
 
 
 
-def _footprint_korman(t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, z = 2.0, method = "Kormann_Meixner"):
+def _footprint_korman(t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, z = 2.0):
     """
     Top-level footprint function.
 
