@@ -1,8 +1,8 @@
-import numpy as np
-
 """
 The `footprint` submodule implements common methods to calculate the
 footprint of the measurement from Eddy Covariance data.
+In addition, several functions are defined to calculate the required
+meteorological parameters.
 
 Beside several methods that can calculate the timevariat footprint,
 an aggregation method for defining a common footprint region is
@@ -17,11 +17,7 @@ Examples
 
 """
 
-
-
-"""
-Functions to calculate meteorological paramters which are needed in the footprint function.
-"""
+import numpy as np
 
 def u_star_calc(cov_uw, cov_vw):
     """
@@ -210,7 +206,7 @@ def sensible_heat_calc(rho, c_p, cov_wt):
     return hts
 
 
-def obukhov_length_calc(rho, c_p, u_star, t_air, hts):
+def obukhov_length_calc(rho, c_p, u_star, t_air, hts, k = 0.4):
     """
     Function to calculate the Obukhov length L [m] based on the actual air temperature.
 
@@ -226,6 +222,8 @@ def obukhov_length_calc(rho, c_p, u_star, t_air, hts):
         friction velocity [m/s].
     hts : list
         sensible heat flux [W/m2].
+    k : float
+        von Karman constant [-]
     Returns
     ----------
     L : list
@@ -236,7 +234,6 @@ def obukhov_length_calc(rho, c_p, u_star, t_air, hts):
     Foken 2017, Micrometeorology, p. 55
 
     """
-    k = 0.4     # von Karman constant
     g = 9.81    # gravity
     L = - (rho * c_p * u_star**3 * (t_air + 273.15)) / (k * g * hts)
     return L
