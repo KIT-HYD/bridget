@@ -311,6 +311,9 @@ def _footprint_korman(t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, z = 2.0):
 
     ### core-footprint-calculation starts here
 
+    #set up a coordinate system (how??)
+
+
     #f.1) calculate phi_c and phi_m (stability functions) [-], Kormann_Meixner gives no calculation if L == 0
     for i in L:
         if (i > 0):
@@ -344,9 +347,10 @@ def _footprint_korman(t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, z = 2.0):
     #f.6) calculate xi (flux length scale) [m]
     xi = (U * z**r) / (r**2 * kappa)
 
-
-    #f.7) calculate the flux footprint [1/m2]
+    #f.7) calculate mu (constant) [-]
     mu = (1 + m) / r
+
+    #f.8) calculate sigma
 
 
 
