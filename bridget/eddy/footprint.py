@@ -26,14 +26,14 @@ def u_star_calc(cov_uw, cov_vw):
 
     Parameters
     ----------
-    cov_uw : list
+    cov_uw : list, float
         Covariance between the wind components u (horizontal) and w (vertical) [m2/s2].
-    cov_vw : list
+    cov_vw : list, float
         Covariance between the wind components v (horizontal) and w (vertical) [m2/s2].
 
     Returns
     ----------
-    u_star : list
+    u_star : list, float
         friction velocity [m/s].
 
     References
@@ -51,14 +51,14 @@ def sat_vapor_pressure_calc(p, t_air):
 
     Parameters
     ----------
-    t_air : list
+    t_air : list, float
         air temperature [°C].
-    p : list
+    p : list, float
         air pressure [hPa].
 
     Returns
     ----------
-    e_w : list
+    e_w : list, float
         saturation vapor pressure [hPa].
 
     References
@@ -76,16 +76,16 @@ def relative_humidity_calc(a, t_air, e_w):
 
     Parameters
     ----------
-    a : list
+    a : list, float
         absolute humidity [g/m3].
-    t_air : list
+    t_air : list, float
         air temperature [°C].
-    e_w : list
+    e_w : list, float
         saturation vapor pressure [hPa].
 
     Returns
     ----------
-    rh : list
+    rh : list, float
         relativ humidity [%].
 
     References
@@ -103,14 +103,14 @@ def act_vapor_pressure_calc(rh, e_w):
 
     Parameters
     ----------
-    rh : list
+    rh : list, float
         relative humidity [%].
-    e_w : list
+    e_w : list, float
         saturation vapor pressure [hPa].
 
     Returns
     ----------
-    e_a : list
+    e_a : list, float
         actual vapor pressure [hPa].
 
     References
@@ -127,16 +127,16 @@ def air_density_calc(p, e_a, t_air):
 
     Parameters
     ----------
-    p : list
+    p : list, float
         air pressure [hPa].
-    e_a : list
+    e_a : list, float
         actual vapor pressure [hPa].
-    t_air : list
+    t_air : list, float
         air temperature [°C].
 
     Returns
     ----------
-    rho : list
+    rho : list, float
         air density [kg/m3].
 
     References
@@ -161,14 +161,14 @@ def specific_heat_cap_calc(e_a, p):
 
     Parameters
     ----------
-    e_a : list
+    e_a : list, float
         actual vapor pressure [hPa].
-    p : list
+    p : list, float
         air pressure [hPa].
 
     Returns
     ----------
-    c_p : list
+    c_p : list, float
         specific heat capacity [J/(kgK)].
 
     References
@@ -186,16 +186,16 @@ def sensible_heat_calc(rho, c_p, cov_wt):
 
     Parameters
     ----------
-    rho : list
+    rho : list, float
         air density [kg/m3].
-    c_p : list
+    c_p : list, float
         specific heat capacity [J/(kgK)].
-    cov_wt : list
+    cov_wt : list, float
         covariance between the vertical wind component w and temperature [(m*°C)/s].
 
     Returns
     ----------
-    hts : list
+    hts : list, float
         sensible heat flux [W/m2].
 
     References
@@ -213,21 +213,21 @@ def obukhov_length_calc(rho, c_p, u_star, t_air, hts, k = 0.4):
 
     Parameters
     ----------
-    rho : list
+    rho : list, float
         air density [kg/m3].
-    c_p : list
+    c_p : list, float
         specific heat capacity [J/(kgK)].
-    t_air : list
+    t_air : list, float
         air temperature [°C].
-    u_star : list
+    u_star : list, float
         friction velocity [m/s].
-    hts : list
+    hts : list, float
         sensible heat flux [W/m2].
     k : float
         von Karman constant [-]
     Returns
     ----------
-    L : list
+    L : list, float
         Obukhov length [m].
 
     References
@@ -241,90 +241,113 @@ def obukhov_length_calc(rho, c_p, u_star, t_air, hts, k = 0.4):
 
 
 
-def footprint(t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction, time, tstamp, z = 2.0, grid = 200, fetch = 500, method = "Kormann"):
+def footprint(time, t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction, tstamp, z = 2.0, fetch = 200, grid = 500, method = "Kormann"):
     """
     Top-level footprint function.
 
-    If more than one footprint method is implemented, these should go
-    into functions in this module. This function then has the **string**
-    parameter "method" to switch the method.
+    The calculation method is selected with the method parameter.
+    Currently implemented methods are:
+        - method = "Kormann": Kormann and Meixner (2001)
+
+    Other methods will follow, with the highest priority for the Kljun model (2015)
+
+    For further information about the methods check the References section.
+    Leclerc and Foken (2014) are giving an overview of avaiable footprint models in chapter 1.3 and table 1.3 (p.12)
 
     Parameters
     ----------
-    z : float
-        measurement height [m].
-    u : list
-        horizontal wind component for the direction in which the sonic is oriented [m/s].
-    cov_uw : list
-        Covariance between the wind components u and w [m2/s2].
-    cov_vw : list
-        Covariance between the wind components v and w [m2/s2].
-    cov_wt : list
-        Covariance between the wind component w and temperature [(m*°C)/s].
-    var_v : list
-        variance of v (horizontal wind component for the direction rectangular to the orientation of the sonic) [m/s].
-    t_air : list
-        air temperature [°C].
-    a : list
-        absolute humidity [g/m3].
-    p : list
-        air pressure [hPa].
-    direction : list
-        wind direction [°].
-    time : list
+    time : list, datetime
         datetime list corresponding to the other variables, format: '%m.%d.%Y %H:%M'.
+    t_air : list, float
+        air temperature [°C].
+    a : list, float
+        absolute humidity [g/m3].
+    p : list, float
+        air pressure [hPa].
+    u : list, float
+        horizontal wind component for the direction in which the sonic is oriented [m/s].
+    cov_uw : list, float
+        Covariance between the wind components u and w [m2/s2].
+    cov_vw : list, float
+        Covariance between the wind components v and w [m2/s2].
+    cov_wt : list, float
+        Covariance between the wind component w and temperature [(m*°C)/s].
+    var_v : list, float
+        variance of v (horizontal wind component for the direction rectangular to the orientation of the sonic) [m/s].
+    direction : list, float
+        wind direction [°].
     tstamp : int
         index of the line/time at which the footprint is to be calculated.
+    z : float
+        measurement height [m].
     fetch : int
         upwind distance over which calculation domain to extends [m].
     grid : int
-        total calculation grid [m].
+        total calculation grid.
     method : string
-        switch the footprint calculation method.
+        pick a calculation method.
+
+    References
+    ----------
+    Leclerc MY, Foken T (eds) (2014) Footprints in Micrometeorology and Ecology. Springer, Berlin
+    Kormann & Meixner 2001, An Analytical Footprint Model For Non-Neutral Stratification
+
     """
     if method.lower() == 'kormann':
-      return _footprint_korman(t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction, time, tstamp, z, grid, fetch)
-    elif method.lower() == 'other_guy':
-      pass
+      return _footprint_kormann(time, t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction, tstamp, z, fetch, grid)
+    else:
+      raise NotImplementedError('Hold tight, other methods are about to come')
 
 
 
 
-def _footprint_korman(t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction, time, tstamp, z, grid, fetch):
+def _footprint_kormann(time, t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction, tstamp, z, fetch, grid):
     """
     Footprint function to calculate the footprint after Kormann & Meixner (2001).
 
 
     Parameters
     ----------
-    z : float
-        measurement height [m].
-    u : list
-        horizontal wind component for the direction in which the sonic is oriented [m/s].
-    cov_uw : list
-        Covariance between the wind components u and w [m2/s2].
-    cov_vw : list
-        Covariance between the wind components v and w [m2/s2].
-    cov_wt : list
-        Covariance between the wind component w and temperature [(m*°C)/s].
-    var_v : list
-        variance of v (horizontal wind component for the direction rectangular to the orientation of the sonic) [m/s].
-    t_air : list
+    time : list, datetime
+        datetime list corresponding to the other variables.
+    t_air : list, float
         air temperature [°C].
-    a : list
+    a : list, float
         absolute humidity [g/m3].
-    p : list
+    p : list, float
         air pressure [hPa].
-    direction : list
+    u : list, float
+        horizontal wind component for the direction in which the sonic is oriented [m/s].
+    cov_uw : list, float
+        Covariance between the wind components u and w [m2/s2].
+    cov_vw : list, float
+        Covariance between the wind components v and w [m2/s2].
+    cov_wt : list, float
+        Covariance between the wind component w and temperature [(m*°C)/s].
+    var_v : list, float
+        variance of v (horizontal wind component for the direction rectangular to the orientation of the sonic) [m/s].
+    direction : list, float
         wind direction [°].
-    time : list
-        datetime list corresponding to the other variables, format: '%m.%d.%Y %H:%M'.
     tstamp : int
         index of the line/time at which the footprint is to be calculated.
+    z : float
+        measurement height [m].
     fetch : int
         upwind distance over which calculation domain to extends [m].
     grid : int
         total calculation grid.
+
+    Returns
+    ----------
+    fp : ndarray, float
+        2D array containing the footprint values.
+    FP_east : ndarray, float
+        2D array containing the grid point distance east of the center point.
+    FP_north : ndarray, float
+        2D array containing the grid point distance north of the center point.
+    fp_norm : ndarray, float
+        2D array containing the normalized footprint values.
+
 
     References
     ----------
@@ -345,26 +368,16 @@ def _footprint_korman(t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction, 
     c_p = specific_heat_cap_calc(e_a, p[t])
 
     hts = sensible_heat_calc(rho, c_p, cov_wt[t])
-    #results for hts are pretty much in compliance with the results in the TK2-file
-    #but many numbers are -9999 in the TK2-file -> when is hts not defined??
 
     L = obukhov_length_calc(rho, c_p, u_star, t_air[t], hts)
-
-        #http://www.shodor.org/os411/courses/_master/tools/calculators/virtualtemp/tv1calc.html
-        ###auch mal in Knöfel, p. 36, Energiebilanzmodellierung schauen, hier alle Formeln!
-        #z/L is differing from the values in the TK2-file --> look at the calculation aggregation
-        #but also: what is z in the TK2 data?
 
     ### core-footprint-calculation starts here
 
     #set up a coordinate system and matrices for the storage of results
     grid = 2 * grid//2
 
-    l_east = np.linspace(-99.5, 99.5, grid)
-    l_north = np.linspace(99.5, -99.5, grid)
-
-    l_east = l_east * 2 * fetch/199     #normalization through the fetch
-    l_north = l_north * 2 * fetch/199
+    l_east = np.linspace(-fetch, fetch, grid)    #constructing an array in eastern direction from -fetch to fetch with the resolution of the grid
+    l_north = np.linspace(fetch, -fetch, grid)   #constructing an array in northern direction from fetch to -fetch with the resolution of the grid
 
     FP_east = (np.ones((len(l_east),len(l_east)))*l_east) #distance to the midpoint in east direction
     FP_north = (np.ones((len(l_north),len(l_north)))*l_north).transpose() #distance to the midpoint in north direction
@@ -383,7 +396,7 @@ def _footprint_korman(t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction, 
     fp = np.zeros((grid,grid))
     D_y = np.zeros((grid,grid))
     P_f = np.zeros((grid,grid))
-    u_plume = np.ones((grid,grid)) #sigma calculation: division by u_plume -> can´t be zero, alles "ones" ist aber auch falsch???
+    u_plume = np.ones((grid,grid)) #sigma calculation: division by u_plume -> can´t be zero, everything "ones" should also be wrong???
     sigma = np.zeros((grid,grid))
 
     #f.1) calculate phi_c and phi_m (stability functions) [-], Kormann_Meixner gives no calculation if L = 0
