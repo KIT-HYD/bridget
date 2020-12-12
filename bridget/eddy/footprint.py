@@ -340,13 +340,13 @@ def _footprint_kormann(time, t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, dire
     Returns
     ----------
     fp : ndarray, float
-        2D array containing the footprint values.
+        2D array containing the footprint values [1/m2].
     FP_east : ndarray, float
-        2D array containing the grid point distance east of the center point.
+        2D array containing the grid point distance east of the center point [m].
     FP_north : ndarray, float
-        2D array containing the grid point distance north of the center point.
+        2D array containing the grid point distance north of the center point [m].
     fp_norm : ndarray, float
-        2D array containing the normalized footprint values.
+        2D array containing the normalized footprint values [-].
 
 
     References
