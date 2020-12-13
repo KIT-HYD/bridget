@@ -386,7 +386,7 @@ def _footprint_kormann(time, t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, dire
 
     FP_angle = np.arctan2(FP_east, FP_north) * 180/np.pi #angle to the midpoint [°]
 
-    FP_angle = FP_angle - direction[0] #"turning the footprint into the direction of the wind"
+    FP_angle = FP_angle - direction[t] #"turning the footprint into the direction of the wind"
 
     FP_x = np.cos(FP_angle/57) * FP_dist
     FP_y = np.sin(FP_angle/57) * FP_dist
