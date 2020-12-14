@@ -241,7 +241,7 @@ def obukhov_length_calc(rho, c_p, u_star, t_air, hts, k = 0.4):
 
 
 
-def footprint(time, t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction, tstamp, z = 2.0, fetch = 200, grid = 500, method = "Kormann"):
+def footprint(dt_index, t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction, tstamp, z = 2.0, fetch = 200, grid = 500, method = "Kormann"):
     """
     Top-level footprint function.
 
@@ -256,7 +256,7 @@ def footprint(time, t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction, ts
 
     Parameters
     ----------
-    time : list, datetime
+    dt_index : list, datetime
         datetime list corresponding to the other variables, format: '%m.%d.%Y %H:%M'.
     t_air : list, float
         air temperature [°C].
@@ -294,21 +294,21 @@ def footprint(time, t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction, ts
 
     """
     if method.lower() == 'kormann':
-      return _footprint_kormann(time, t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction, tstamp, z, fetch, grid)
+      return _footprint_kormann(dt_index, t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction, tstamp, z, fetch, grid)
     else:
       raise NotImplementedError('Hold tight, other methods are about to come')
 
 
 
 
-def _footprint_kormann(time, t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction, tstamp, z, fetch, grid):
+def _footprint_kormann(dt_index, t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction, tstamp, z, fetch, grid):
     """
     Footprint function to calculate the footprint after Kormann & Meixner (2001).
 
 
     Parameters
     ----------
-    time : list, datetime
+    dt_index : list, datetime
         datetime list corresponding to the other variables.
     t_air : list, float
         air temperature [°C].
