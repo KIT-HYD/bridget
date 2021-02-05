@@ -2,7 +2,7 @@ class BURGESS_FACTORS:
     """
     Do not instantiate this class.
     The class will return the factors for wound corrections for different
-    probe configurations and wound sizes.
+    probe spacings and wound diameters.
     The numbers are taken from Table 1 (p.595) in Burgess et al. (2001)
     
     References
@@ -12,7 +12,7 @@ class BURGESS_FACTORS:
         (2001): 589-598.
 
     """
-    size_06 = {
+    spacing_06 = {
         17: [1.6565, -0.0014, 0.0002],
         18: [1.7077, -0.0014, 0.0002],
         19: [1.7701, -0.0017, 0.0002],
@@ -25,7 +25,7 @@ class BURGESS_FACTORS:
         28: [2.3448, -0.0047, 0.0008],
         30: [2.4908, -0.0057, 0.0010],
     }
-    size_05 = {
+    spacing_05 = {
         17: [1.6821, -0.0015, 0.0002],
         18: [1.7304, -0.0013, 0.0002],
         19: [1.7961, -0.0016, 0.0002],
@@ -46,20 +46,20 @@ class BURGESS_FACTORS:
         while idx not in keys:
             i += 1
             if i > 500 or idx <= 17:
-                raise ValueError("Can't find Burgess Factor for wound size of %.2f." % wound)
+                raise ValueError("Can't find Burgess Factor for wound diameter of %.2f." % wound)
             idx -= 1
         return idx
     
     @classmethod
     def get(cls, probe, wound):
         if probe == '0.6':
-            idx = cls.__idx(cls.size_06.keys(), wound)
-            return cls.size_06[idx]
+            idx = cls.__idx(cls.spacing_06.keys(), wound)
+            return cls.spacing_06[idx]
         elif probe == '0.5':
-            idx = cls.__idx(cls.size_05.keys(), wound)
-            return cls.size_05[idx]
+            idx = cls.__idx(cls.spacing_05.keys(), wound)
+            return cls.spacing_05[idx]
         else:
-            raise ValueError("%s is not a known probe config. Allowed values: ['0.5', '0.6']" % probe)
+            raise ValueError("%s is not a known probe spacing. Allowed values: ['0.5', '0.6']" % probe)
 
 
 def misalignment_correction():
@@ -72,12 +72,40 @@ def wounding_correction(method='burgess', **kwargs):
     else:
         raise NotImplementedError
 
-
-def _wounding_correction_burgess(probe_size, wound_size, **kwargs):
-    # get the factors
-    b, c, d = BURGESS_FACTORS.get(probe_size, wound_size)
+    # warum hat die so nen komischen _ davor, die Funktion?
+def _wounding_correction_burgess(vs, probe_spacing, wound_diameter, **kwargs):
+    """
+    Wounding correction for heat pulse velocity after Burgess (2001)
     
-    # go crazy
+    Reference
+    ---------    
+    Burgess, Stephen SO, et al. "An improved heat pulse method to measure low 
+        and reverse rates of sap flow in woody plants." Tree physiology 21.9 
+        (2001): 589-598.
+
+    
+    Parameters
+    ----------
+    vs : numpy.array
+        Array of sap velocity values
+    probe_spacing: float
+        Spacing between two needles of the sensor in [cm]. 
+    wound_diameter: float
+        Diameter of the wound in [10^(-2) cm]
+
+    Returns
+    -------
+    vc : numpy.array
+        sap velocity corrected for wounding effect after Burgess(2001)
+    
+    """
+    # get the factors
+    b, c, d = BURGESS_FACTORS.get(probe_spacing, wound_diameter)
+    # calculation
+    vc = b*vs + c*vs**2 + d*vs**3
+    return(vc)
+    
+    # Unterschied zwischen pass und return??
     pass
 
 
