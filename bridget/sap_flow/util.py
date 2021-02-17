@@ -62,6 +62,35 @@ class BURGESS_FACTORS:
             raise ValueError("%s is not a known probe spacing. Allowed values: ['0.5', '0.6']" % probe)
 
 
+class GEBAUER_FACTORS:
+    """
+    """
+    factors = {
+        'fagus sylvatica': [0.778, 1.917],
+        'quercus petraea': [0.065, 2.264]
+    }
+    
+    name_mapping = {
+        'beech': 'fagus sylvatica',
+        'beech sp.': 'fagus sylvatica',
+        'oak': 'quercus petraea',
+        
+    }
+    
+    @classmethod
+    def get(cls, species: str):
+        # get the factors
+        if species.lower() in cls.factors.keys():
+            return cls.factors[species.lower()]
+        elif species.lower() in cls.name_mapping.keys():
+            return cls.factors[cls.name_mapping[species.lower()]]
+        
+        # The species is not known 
+        possible_names = list(factors.keys())
+        possible_names.extend(list(name_mapping.keys()))
+        raise ValueError("The species %s is not known. please use one of:\n%s") % (species, possible_names)
+
+
 def misalignment_correction():
     pass
 
@@ -72,7 +101,7 @@ def wounding_correction(method='burgess', **kwargs):
     else:
         raise NotImplementedError
 
-    # warum hat die so nen komischen _ davor, die Funktion?
+    
 def _wounding_correction_burgess(vs, probe_spacing, wound_diameter, **kwargs):
     """
     Wounding correction for heat pulse velocity after Burgess (2001)

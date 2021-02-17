@@ -11,6 +11,8 @@ flux density, whereas subsequent calculations can be applied to all methods.
 """
 import numpy as np
 
+from .util import GEBAUER_FACTORS
+
 
 def heat_pulse_velocity(temperatures, m_c, rho_b, probe_spacing):
     """Calculate heat pulse velocity from temperature measurements of sensors
@@ -119,15 +121,15 @@ def _sap_velocity_East30_3needle(dTu=None, dTd=None, ru=0.006, rd=0.006, **kwarg
     return vs
 
 
-def sapwood_area(dbh, sapwood_depth=None, bark_depth=None, **kwargs):
+def sapwood_area(dbh: float, species: str, sapwood_depth=None, bark_depth=None, **kwargs) -> float:
     """
     """
     # get the bark depth parameter
-    bark_depth = __estimate_bark_depth(dbh, bark_depth)
+    bark_depth = __estimate_bark_depth(dbh, species, bark_depth)
     
     # check if user has sapwood_depth measurements
     if sapwood_depth is None:
-        As = _sapwood_area_gebauer(dbh, **kwargs)
+        As = _sapwood_area_gebauer(dbh, species, **kwargs)
     else:
         # As = A_without_bark - A_heartwood
         r_x = (dbh - bark_depth) / 2
@@ -139,78 +141,75 @@ def sapwood_area(dbh, sapwood_depth=None, bark_depth=None, **kwargs):
     return As
 
 
-def _sapwood_area_gebauer(dbh, **kwargs):
+def _sapwood_area_gebauer(dbh: float, species: str, **kwargs) -> float:
     # TODO: a und b noch aus Literatur bestimmen
-    a = 10000
-    b = 10000
+    a, b = GEBAUER_FACTORS.get(species)
     As = a * dbh**b
     return As
 
 
-def __estimate_bark_depth(dbh, bark_depth):
-        # check bark_depth
-    if bark_depth is None:
-        print('No bark_depth given. Assuming 0 depth.')
+def __estimate_bark_depth(dbh: float, species: str, bark_depth=None) -> float:
+    if bark_depth is None and species is None:
+        raise ValueError('You need to specify either the species or the bark depth.')
+        
+    # check bark_depth
+    if bark_depth is not None:
+        # TODO ducoment why we do this
+        return bark_depth * 2
+    
+    # translate to latin name
+    sp_name = GEBAUER_FACTORS.name_mapping.get(species.lower())
+
+    if sp_name == 'quercus petraea':
+        return 9.88855 + 0.56734 * dbh
+    
+    elif sp_name == 'fagus sylvatica':
+        return 2.61029 + 0.28522 * dbh
+    
+    else:
+        print('[Warning]: %s is not supported. Using bark depth of 0.' % species)
         return 0.
-    elif isinstance(bark_depth, str):
-        if bark_depth.lower() == 'oak':
-            return 9.88855 + 0.56734 * dbh
-        elif bark_depth.lower() == 'beech':
-            return 2.61029 + 0.28522 * dbh
-        else:
-            raise ValueError("if bark_depth is a string it has to be in ['oak', 'beech']")
-    
-    if not isinstance(bark_depth, (float, int)):
-        raise ValueError('bark_depth has to be of type float or string.')
-    
-    return bark_depth
 
 
-def __sap_flow_profile(As, vs, depths, dbh, bark_depth=None, sapwood_depth=None):
+def __sap_flow_profile(As, vs, depths, dbh: float, species: str, bark_depth=None, sapwood_depth=None):
     # sapwood area slices
     _As = []
     
     # get the area for each v and depth pair
     for i, (v, depth) in enumerate(zip(vs, depths)):
-        _A = sapwood_area(dbh, bark_depth=bark_depth, sapwood_depth=depth)
+        _A = sapwood_area(dbh, species, bark_depth=bark_depth, sapwood_depth=depth)
         if i == 0:
             _As.append(_A)
         else:
             _As.append(max(_A - np.sum(_As), 0))
 
     # last element
-    _As.append(max(As - np.sum(_As), 0))
-    
-    # estimate velocity in last element
-    vs = np.concatenate((
-        vs, 
-#        __estimate_sapwood_velocity(dbh, vs[-1], depths[-1], sapwood_depth, bark_depth)
-        # TODO this is not correct -> repair
-        vs[-1] / 2
-    ))
-    
+    _As[-1] = __estimate_last_chunk(dbh, species, depths[-1], sapwood_depth=sapwood_depth, bark_depth=bark_depth)
+
     return np.sum(np.array(_As) * vs)
 
 
-def __estimate_sapwood_velocity(dbh, upper_vs, upper_depth, sapwood_depth=None, bark_depth=None):
+def __estimate_last_chunk(dbh: float, species: str, upper_depth, sapwood_depth=None, bark_depth=None) -> float:
     # get bark depth
-    bark_depth = __estimate_bark_depth(dbh, bark_depth)
+    bark_depth = __estimate_bark_depth(dbh, species, bark_depth)
     r_x = (dbh - bark_depth) / 2
     
+    #  Use measured sapwood depth or estimate it
     if sapwood_depth is None:
         A_rx = np.pi * r_x**2
-        As = _sapwood_area_gebauer(dbh)
+        As = _sapwood_area_gebauer(dbh, species)
         Ah = A_rx - As
         r_h = np.sqrt(Ah / np.pi)
     else:
         r_h = r_x - sapwood_depth
-    r_h
+    
+    # TODO: add a comment what we actually do and why (A4 Renner 2016)
+    r = r_x - upper_depth
+    A = np.pi * (r**2 - (1 / 3) * r**2 + r * r_h + r_h**2)
+    return A
 
 
-# A3 = pi * ((rx - upper_depth)**2 - 1/3*((rx-upper_depth)**2 + (rx-upper_depth)*rh + rh**2))
-
-
-def sap_flow(vs, dbh, depths=None, bark_depth=None, sapwood_depth=None, **kwargs):
+def sap_flow(vs, dbh: float, species: str, depths=None, bark_depth=None, sapwood_depth=None, **kwargs):
     """Calculate sap flow from sap velocity and sapwood area. 
 
     [Description]
@@ -223,6 +222,8 @@ def sap_flow(vs, dbh, depths=None, bark_depth=None, sapwood_depth=None, **kwargs
         Bark depth in [cm]
     dbh : float
         Diameter at breast height in [cm]
+    species : str
+        
 
     Returns
     -------
@@ -245,10 +246,10 @@ def sap_flow(vs, dbh, depths=None, bark_depth=None, sapwood_depth=None, **kwargs
             edges = np.array(edges)
     
     # calculate the area first
-    As = sapwood_area(dbh, bark_depth=bark_depth, sapwood_depth=sapwood_depth, **kwargs)
+    As = sapwood_area(dbh, species, bark_depth=bark_depth, sapwood_depth=sapwood_depth, **kwargs)
     
     # check inpiut dimnesionality
     if vs.size == 1:
         return As * vs    
     else:
-        return __sap_flow_profile(As, vs, edges, dbh, bark_depth=bark_depth, sapwood_depth=sapwood_depth)
+        return __sap_flow_profile(As, vs, edges, dbh, species, bark_depth=bark_depth, sapwood_depth=sapwood_depth)
