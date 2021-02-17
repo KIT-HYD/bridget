@@ -104,9 +104,6 @@ def _wounding_correction_burgess(vs, probe_spacing, wound_diameter, **kwargs):
     # calculation
     vc = b*vs + c*vs**2 + d*vs**3
     return(vc)
-    
-    # Unterschied zwischen pass und return??
-    pass
 
 
 def t_stand():
