@@ -247,7 +247,8 @@ def footprint(dt_index, t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction
 
     The calculation method is selected with the method parameter.
     Currently implemented methods are:
-        - method = "Kormann": Kormann and Meixner (2001)
+
+    - ``'kormann'``: Kormann and Meixner (2001)
 
     Other methods will follow, with the highest priority for the Kljun model (2015)
 
@@ -294,14 +295,14 @@ def footprint(dt_index, t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction
 
     """
     if method.lower() == 'kormann':
-      return _footprint_kormann(dt_index, t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction, tstamp, z, fetch, grid)
+      return footprint_kormann(dt_index, t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction, tstamp, z, fetch, grid)
     else:
       raise NotImplementedError('Hold tight, other methods are about to come')
 
 
 
 
-def _footprint_kormann(dt_index, t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction, tstamp, z, fetch, grid):
+def footprint_kormann(dt_index, t_air, a, p, u, cov_uw, cov_vw, cov_wt, var_v, direction, tstamp, z, fetch, grid):
     """
     Footprint function to calculate the footprint after Kormann & Meixner (2001).
 
