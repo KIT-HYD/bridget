@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bridget.sap_flow.sap_velocity_heat_ratio &#8212; BridET 0.3.0 documentation</title>
+    <title>Sap Flow Module &#8212; BridET 0.3.0 documentation</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -37,6 +37,8 @@
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="bridget.sap_flow.sap_flow" href="gen_modules/bridget.sap_flow.sap_flow.html" />
+    <link rel="prev" title="bridget.eddy.footprint_kormann" href="gen_modules/bridget.eddy.footprint_kormann.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -74,8 +76,8 @@
  </a>
 </li>
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../reference/reference.html">
+<li class="toctree-l1 current active nav-item">
+ <a class="reference internal nav-link" href="reference.html">
   Code Reference
  </a>
 </li>
@@ -109,7 +111,63 @@
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
-    
+    <p class="caption">
+ <span class="caption-text">
+  Sub-Modules
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="eddy.html">
+   Eddy Covariance Module
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="gen_modules/bridget.eddy.footprint.html">
+     bridget.eddy.footprint
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="gen_modules/bridget.eddy.footprint_kormann.html">
+     bridget.eddy.footprint_kormann
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="current reference internal" href="#">
+   Sap Flow Module
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="gen_modules/bridget.sap_flow.sap_flow.html">
+     bridget.sap_flow.sap_flow
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="gen_modules/bridget.sap_flow.sap_velocity_heat_ratio.html">
+     bridget.sap_flow.sap_velocity_heat_ratio
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="gen_modules/bridget.sap_flow.sap_velocity_granier.html">
+     bridget.sap_flow.sap_velocity_granier
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
   </div>
 </nav>
             </div>
@@ -122,9 +180,19 @@
               
               <div class="toc-item">
                 
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
 
 <nav id="bd-toc-nav">
-    
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#sap-flow">
+   Sap flow
+  </a>
+ </li>
+</ul>
+
 </nav>
               </div>
               
@@ -144,13 +212,31 @@
               
               <div>
                 
-  <div class="section" id="bridget-sap-flow-sap-velocity-heat-ratio">
-<h1>bridget.sap_flow.sap_velocity_heat_ratio<a class="headerlink" href="#bridget-sap-flow-sap-velocity-heat-ratio" title="Permalink to this headline">¶</a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="bridget.sap_flow.sap_velocity_heat_ratio">
-<span class="sig-prename descclassname"><span class="pre">bridget.sap_flow.</span></span><span class="sig-name descname"><span class="pre">sap_velocity_heat_ratio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dTu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dTd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'East30_3needle'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bridget.sap_flow.sap_velocity_heat_ratio" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+  <div class="section" id="module-bridget.sap_flow">
+<span id="sap-flow-module"></span><h1>Sap Flow Module<a class="headerlink" href="#module-bridget.sap_flow" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="sap-flow">
+<h2>Sap flow<a class="headerlink" href="#sap-flow" title="Permalink to this headline">¶</a></h2>
+<p>The sapflow packages includes helpful functions to process and analyze
+sap flow data.</p>
+<p>[DESCRIPTION]</p>
+<table class="longtable table autosummary">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="gen_modules/bridget.sap_flow.sap_flow.html#bridget.sap_flow.sap_flow" title="bridget.sap_flow.sap_flow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sap_flow</span></code></a>(vs, dbh, species[, depths, …])</p></td>
+<td><p>Calculate sap flow from sap velocity and sapwood area.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="gen_modules/bridget.sap_flow.sap_velocity_heat_ratio.html#bridget.sap_flow.sap_velocity_heat_ratio" title="bridget.sap_flow.sap_velocity_heat_ratio"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sap_velocity_heat_ratio</span></code></a>(dTu, dTd[, method])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="gen_modules/bridget.sap_flow.sap_velocity_granier.html#bridget.sap_flow.sap_velocity_granier" title="bridget.sap_flow.sap_velocity_granier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sap_velocity_granier</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 
@@ -159,6 +245,8 @@
               
               <div class='prev-next-bottom'>
                 
+    <a class='left-prev' id="prev-link" href="gen_modules/bridget.eddy.footprint_kormann.html" title="previous page">bridget.eddy.footprint_kormann</a>
+    <a class='right-next' id="next-link" href="gen_modules/bridget.sap_flow.sap_flow.html" title="next page">bridget.sap_flow.sap_flow</a>
 
               </div>
               
