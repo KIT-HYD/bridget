@@ -53,16 +53,23 @@ def heat_pulse_velocity(temperatures, m_c, rho_b, probe_spacing):
     raise NotImplementedError
 
 
-def sap_velocity(method='East30_3needle', **kwargs):
+def sap_velocity_granier(**kwargs):
     """
     """
-    if method.lower() == 'East30_3needle':
-        return _sap_velocity_East30_3needle(**kwargs)
+    raise NotImplementedError
+
+
+def sap_velocity_heat_ratio(dTu, dTd, method='East30_3needle', **kwargs):
+    """
+    """
+    if method.lower() == 'east30_3needle':
+        return _sap_velocity_East30_3needle(dTu, dTd, **kwargs)
     else:
         raise NotImplementedError
 
 
-def _sap_velocity_East30_3needle(dTu=None, dTd=None, ru=0.006, rd=0.006, **kwargs):
+
+def _sap_velocity_East30_3needle(dTu, dTd, ru=0.006, rd=0.006, **kwargs):
     """Sap velocity for East30 Sensor
     
     Calculate sap velocity for East30 3-needle sap flow sensors for two corresponding
