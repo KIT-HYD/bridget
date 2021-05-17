@@ -21,4 +21,4 @@ BridET - Briding the gaps of Evapotranspiration
    :caption: Contents:
 
    installation
-   reference
+   reference/reference
