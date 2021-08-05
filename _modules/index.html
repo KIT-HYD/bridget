@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Eddy Covariance Module &#8212; BridET 0.3.0 documentation</title>
+    <title>Overview: module code &#8212; BridET 0.3.0 documentation</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -37,8 +37,6 @@
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="bridget.eddy.footprint" href="gen_modules/bridget.eddy.footprint.html" />
-    <link rel="prev" title="Code Reference" href="reference.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -76,8 +74,8 @@
  </a>
 </li>
 
-<li class="toctree-l1 current active nav-item">
- <a class="reference internal nav-link" href="reference.html">
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../reference/reference.html">
   Code Reference
  </a>
 </li>
@@ -111,63 +109,7 @@
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
-    <p class="caption" role="heading">
- <span class="caption-text">
-  Sub-Modules
- </span>
-</p>
-<ul class="current nav bd-sidenav">
- <li class="toctree-l1 current active has-children">
-  <a class="current reference internal" href="#">
-   Eddy Covariance Module
-  </a>
-  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
-  <label for="toctree-checkbox-1">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="gen_modules/bridget.eddy.footprint.html">
-     bridget.eddy.footprint
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="gen_modules/bridget.eddy.footprint_kormann.html">
-     bridget.eddy.footprint_kormann
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="sapflow.html">
-   Sap Flow Module
-  </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
-  <label for="toctree-checkbox-2">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="gen_modules/bridget.sap_flow.sap_flow.html">
-     bridget.sap_flow.sap_flow
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="gen_modules/bridget.sap_flow.sap_velocity_heat_ratio.html">
-     bridget.sap_flow.sap_velocity_heat_ratio
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="gen_modules/bridget.sap_flow.sap_velocity_granier.html">
-     bridget.sap_flow.sap_velocity_granier
-    </a>
-   </li>
-  </ul>
- </li>
-</ul>
-
+    
   </div>
 </nav>
             </div>
@@ -176,30 +118,6 @@
 
           
           <div class="d-none d-xl-block col-xl-2 bd-toc">
-            
-              
-              <div class="toc-item">
-                
-<div class="tocsection onthispage pt-5 pb-3">
-    <i class="fas fa-list"></i> On this page
-</div>
-
-<nav id="bd-toc-nav">
-    <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#id1">
-   Eddy Covariance Module
-  </a>
- </li>
-</ul>
-
-</nav>
-              </div>
-              
-              <div class="toc-item">
-                
-              </div>
-              
             
           </div>
           
@@ -212,37 +130,16 @@
               
               <div>
                 
-  <div class="section" id="module-bridget.eddy">
-<span id="eddy-covariance-module"></span><h1>Eddy Covariance Module<a class="headerlink" href="#module-bridget.eddy" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id1">
-<h2>Eddy Covariance Module<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<p>As of now, only a function for calculating the footprint
-is implemented.</p>
-<table class="longtable table autosummary">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="gen_modules/bridget.eddy.footprint.html#bridget.eddy.footprint" title="bridget.eddy.footprint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">footprint</span></code></a>(dt_index, t_air, a, p, u, cov_uw, …)</p></td>
-<td><p>Top-level footprint function.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="gen_modules/bridget.eddy.footprint_kormann.html#bridget.eddy.footprint_kormann" title="bridget.eddy.footprint_kormann"><code class="xref py py-obj docutils literal notranslate"><span class="pre">footprint_kormann</span></code></a>(dt_index, t_air, a, p, u, …)</p></td>
-<td><p>Footprint function to calculate the footprint after Kormann &amp; Meixner (2001).</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-
+  <h1>All modules for which code is available</h1>
+<ul><li><a href="bridget/eddy/footprint.html">bridget.eddy.footprint</a></li>
+<li><a href="bridget/sap_flow/sap_flow.html">bridget.sap_flow.sap_flow</a></li>
+</ul>
 
               </div>
               
               
               <div class='prev-next-bottom'>
                 
-    <a class='left-prev' id="prev-link" href="reference.html" title="previous page">Code Reference</a>
-    <a class='right-next' id="next-link" href="gen_modules/bridget.eddy.footprint.html" title="next page">bridget.eddy.footprint</a>
 
               </div>
               

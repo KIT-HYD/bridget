@@ -1,0 +1,432 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bridget.sap_flow.sap_flow &#8212; BridET 0.3.0 documentation</title>
+    
+  <link href="../../../_static/css/theme.css" rel="stylesheet" />
+  <link href="../../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/basic.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/gallery-rendered-html.css" />
+    
+  <link rel="preload" as="script" href="../../../_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+<a class="navbar-brand" href="../../../index.html">
+<p class="title">BridET</p>
+</a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../../installation.html">
+  Installation
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../../reference/reference.html">
+  Code Reference
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    
+  </div>
+</nav>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <h1>Source code for bridget.sap_flow.sap_flow</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Sap Flow package</span>
+<span class="sd">----------------</span>
+
+<span class="sd">These functions can be used to process sap flow measurements from different sensors </span>
+<span class="sd">and measurement methods in order to to calculate transpiration estimates for </span>
+<span class="sd">individual trees and scale up to stands. Method-specific differences exist in </span>
+<span class="sd">the calculations from the temperature measurements up to sap velocity or sap </span>
+<span class="sd">flux density, whereas subsequent calculations can be applied to all methods. </span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">GEBAUER_FACTORS</span>
+
+
+<span class="k">def</span> <span class="nf">heat_pulse_velocity</span><span class="p">(</span><span class="n">temperatures</span><span class="p">,</span> <span class="n">m_c</span><span class="p">,</span> <span class="n">rho_b</span><span class="p">,</span> <span class="n">probe_spacing</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate heat pulse velocity from temperature measurements of sensors</span>
+<span class="sd">    using the heat pulse / heat ratio method.  </span>
+
+<span class="sd">    [Description]</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    temperatures : list, numpy.array</span>
+<span class="sd">        Array of two coupled temperatures per measurement depth</span>
+<span class="sd">    m_c : list, numpy.array</span>
+<span class="sd">        Water content of the wood</span>
+<span class="sd">    rho_b : list, numpy.array</span>
+<span class="sd">        Sapwood density</span>
+<span class="sd">    probe_spacing : int</span>
+<span class="sd">        Spacing between the temperature probes and the heating </span>
+<span class="sd">    </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    vh : numpy.array</span>
+<span class="sd">        Array of heat pulse velocity per measurement depth.  </span>
+<span class="sd">    t_rise : numpy.array</span>
+<span class="sd">        timing offset in maximum temperature rise. </span>
+<span class="sd">        Will only be returned if ``with_uncertainties=True``.</span>
+<span class="sd">    var_mc : numpy.array</span>
+<span class="sd">        variance in m_v</span>
+<span class="sd">        Will only be returned if ``with_uncertainties=True``.</span>
+<span class="sd">    var_rho : numpy.array</span>
+<span class="sd">        variance in rho_b</span>
+<span class="sd">        Will only be returned if ``with_uncertainties=True``.</span>
+<span class="sd">    t_diffusivity : numpy.array</span>
+<span class="sd">        temperature diffusivity</span>
+<span class="sd">        Will only be returned if ``with_uncertainties=True``.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
+<div class="viewcode-block" id="sap_velocity_granier"><a class="viewcode-back" href="../../../reference/gen_modules/bridget.sap_flow.sap_velocity_granier.html#bridget.sap_flow.sap_velocity_granier">[docs]</a><span class="k">def</span> <span class="nf">sap_velocity_granier</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="sap_velocity_heat_ratio"><a class="viewcode-back" href="../../../reference/gen_modules/bridget.sap_flow.sap_velocity_heat_ratio.html#bridget.sap_flow.sap_velocity_heat_ratio">[docs]</a><span class="k">def</span> <span class="nf">sap_velocity_heat_ratio</span><span class="p">(</span><span class="n">dTu</span><span class="p">,</span> <span class="n">dTd</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;East30_3needle&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;east30_3needle&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_sap_velocity_East30_3needle</span><span class="p">(</span><span class="n">dTu</span><span class="p">,</span> <span class="n">dTd</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">_sap_velocity_East30_3needle</span><span class="p">(</span><span class="n">dTu</span><span class="p">,</span> <span class="n">dTd</span><span class="p">,</span> <span class="n">ru</span><span class="o">=</span><span class="mf">0.006</span><span class="p">,</span> <span class="n">rd</span><span class="o">=</span><span class="mf">0.006</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sap velocity for East30 Sensor</span>
+<span class="sd">    </span>
+<span class="sd">    Calculate sap velocity for East30 3-needle sap flow sensors for two corresponding</span>
+<span class="sd">    temperature measurements below and above the middle heater needle. </span>
+<span class="sd">    Sap velocity (equation (6) page 33 East30 3-needle sap flow sensor manual), last term omitted, in [m/s]</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ru, rd : float</span>
+<span class="sd">        distance from heater to sensor, upstream (ru) and downstream (rd), in [m]</span>
+<span class="sd">        (upstream corresponds to the needle below the heater, downstream in above the heater, in an assumed upward water movement)</span>
+<span class="sd">    dTu : list, numpy.array</span>
+<span class="sd">        time series of temperature differences in [K] at the upstream thermistor (below the heater in an upward water movement), differences are between initial </span>
+<span class="sd">        temperature and 60 seconds after heating. </span>
+<span class="sd">    dTd : list, numpy.array</span>
+<span class="sd">        time series of temperature differences in [K] at the downstream thermistor (above the heater in an upward water movement), differences are between initial </span>
+<span class="sd">        temperature and 60 seconds after heating.</span>
+<span class="sd">    </span>
+<span class="sd">    Keyword Arguments</span>
+<span class="sd">    -----------------</span>
+<span class="sd">    k_sapwood : float</span>
+<span class="sd">        thermal conductivity of sapwood in [W m-1 K-1], 0.5 is a literature value</span>
+<span class="sd">    Cw : float</span>
+<span class="sd">        specific heat of water in [J m-3 K-1], 4.1796 J/(cm³ K) at 25°C is a literature value</span>
+<span class="sd">    force_si : bool</span>
+<span class="sd">        Defaults to `False`. </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    vs : numpy.array</span>
+<span class="sd">        Array of sap velocity, here converted to [cm h-1].</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># check parameter</span>
+    <span class="k">if</span> <span class="n">dTu</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">dTd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;dTu and dTd need to be a numpy.array.&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># dTu and dTd need the same dimension</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">dTu</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">dTd</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;dTu and dTd need to be of same length&#39;</span><span class="p">)</span>
+    
+<span class="c1">#    if len(kwargs.keys()) &gt; 0:</span>
+<span class="c1">#        print(&#39;Got unknown parameter: %s&#39; % &#39;,&#39;.join(kwargs.keys()))</span>
+    
+    <span class="c1"># get other parameters</span>
+    <span class="n">k_sapwood</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;k_sapwood&#39;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>           
+    <span class="n">Cw</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Cw&#39;</span><span class="p">,</span> <span class="mf">4.1796</span> <span class="o">*</span> <span class="mi">1000000</span><span class="p">)</span>
+    
+    <span class="c1"># calculation of sap velocity </span>
+    <span class="n">vs</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k_sapwood</span> <span class="o">/</span> <span class="p">(</span><span class="n">Cw</span> <span class="o">*</span> <span class="p">(</span><span class="n">ru</span> <span class="o">+</span> <span class="n">rd</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">dTu</span> <span class="o">/</span> <span class="n">dTd</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;force_si&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="c1"># convert [m/s] to [cm/h]</span>
+        <span class="n">vs</span> <span class="o">=</span> <span class="n">vs</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">*</span> <span class="mi">3600</span>
+
+    <span class="k">return</span> <span class="n">vs</span>
+
+
+<span class="k">def</span> <span class="nf">sapwood_area</span><span class="p">(</span><span class="n">dbh</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">species</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sapwood_depth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bark_depth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get the bark depth parameter</span>
+    <span class="n">bark_depth</span> <span class="o">=</span> <span class="n">__estimate_bark_depth</span><span class="p">(</span><span class="n">dbh</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">bark_depth</span><span class="p">)</span>
+    
+    <span class="c1"># check if user has sapwood_depth measurements</span>
+    <span class="k">if</span> <span class="n">sapwood_depth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">As</span> <span class="o">=</span> <span class="n">_sapwood_area_gebauer</span><span class="p">(</span><span class="n">dbh</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># As = A_without_bark - A_heartwood</span>
+        <span class="n">r_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">dbh</span> <span class="o">-</span> <span class="n">bark_depth</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">A_without_bark</span> <span class="o">=</span> <span class="n">r_x</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+        <span class="n">A_heartwood</span> <span class="o">=</span> <span class="p">(</span><span class="n">r_x</span> <span class="o">-</span> <span class="n">sapwood_depth</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+        
+        <span class="n">As</span> <span class="o">=</span> <span class="n">A_without_bark</span> <span class="o">-</span> <span class="n">A_heartwood</span>
+    
+    <span class="k">return</span> <span class="n">As</span>
+
+
+<span class="k">def</span> <span class="nf">_sapwood_area_gebauer</span><span class="p">(</span><span class="n">dbh</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">species</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="c1"># TODO: a und b noch aus Literatur bestimmen</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">GEBAUER_FACTORS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">species</span><span class="p">)</span>
+    <span class="n">As</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">dbh</span><span class="o">**</span><span class="n">b</span>
+    <span class="k">return</span> <span class="n">As</span>
+
+
+<span class="k">def</span> <span class="nf">__estimate_bark_depth</span><span class="p">(</span><span class="n">dbh</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">species</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">bark_depth</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">bark_depth</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">species</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You need to specify either the species or the bark depth.&#39;</span><span class="p">)</span>
+        
+    <span class="c1"># check bark_depth</span>
+    <span class="k">if</span> <span class="n">bark_depth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># TODO ducoment why we do this</span>
+        <span class="k">return</span> <span class="n">bark_depth</span> <span class="o">*</span> <span class="mi">2</span>
+    
+    <span class="c1"># translate to latin name</span>
+    <span class="n">sp_name</span> <span class="o">=</span> <span class="n">GEBAUER_FACTORS</span><span class="o">.</span><span class="n">name_mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">species</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="n">sp_name</span> <span class="o">==</span> <span class="s1">&#39;quercus petraea&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">9.88855</span> <span class="o">+</span> <span class="mf">0.56734</span> <span class="o">*</span> <span class="n">dbh</span>
+    
+    <span class="k">elif</span> <span class="n">sp_name</span> <span class="o">==</span> <span class="s1">&#39;fagus sylvatica&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">2.61029</span> <span class="o">+</span> <span class="mf">0.28522</span> <span class="o">*</span> <span class="n">dbh</span>
+    
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[Warning]: </span><span class="si">%s</span><span class="s1"> is not supported. Using bark depth of 0.&#39;</span> <span class="o">%</span> <span class="n">species</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">0.</span>
+
+
+<span class="k">def</span> <span class="nf">__sap_flow_profile</span><span class="p">(</span><span class="n">As</span><span class="p">,</span> <span class="n">vs</span><span class="p">,</span> <span class="n">depths</span><span class="p">,</span> <span class="n">dbh</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">species</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">bark_depth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sapwood_depth</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># sapwood area slices</span>
+    <span class="n">_As</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="c1"># get the area for each v and depth pair</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">depth</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">vs</span><span class="p">,</span> <span class="n">depths</span><span class="p">)):</span>
+        <span class="n">_A</span> <span class="o">=</span> <span class="n">sapwood_area</span><span class="p">(</span><span class="n">dbh</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">bark_depth</span><span class="o">=</span><span class="n">bark_depth</span><span class="p">,</span> <span class="n">sapwood_depth</span><span class="o">=</span><span class="n">depth</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">_As</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_A</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_As</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">_A</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">_As</span><span class="p">),</span> <span class="mi">0</span><span class="p">))</span>
+
+    <span class="c1"># last element</span>
+    <span class="n">_As</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">__estimate_last_chunk</span><span class="p">(</span><span class="n">dbh</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">depths</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">sapwood_depth</span><span class="o">=</span><span class="n">sapwood_depth</span><span class="p">,</span> <span class="n">bark_depth</span><span class="o">=</span><span class="n">bark_depth</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">_As</span><span class="p">)</span> <span class="o">*</span> <span class="n">vs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">__estimate_last_chunk</span><span class="p">(</span><span class="n">dbh</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">species</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">upper_depth</span><span class="p">,</span> <span class="n">sapwood_depth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bark_depth</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="c1"># get bark depth</span>
+    <span class="n">bark_depth</span> <span class="o">=</span> <span class="n">__estimate_bark_depth</span><span class="p">(</span><span class="n">dbh</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">bark_depth</span><span class="p">)</span>
+    <span class="n">r_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">dbh</span> <span class="o">-</span> <span class="n">bark_depth</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    
+    <span class="c1">#  Use measured sapwood depth or estimate it</span>
+    <span class="k">if</span> <span class="n">sapwood_depth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">A_rx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">r_x</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">As</span> <span class="o">=</span> <span class="n">_sapwood_area_gebauer</span><span class="p">(</span><span class="n">dbh</span><span class="p">,</span> <span class="n">species</span><span class="p">)</span>
+        <span class="n">Ah</span> <span class="o">=</span> <span class="n">A_rx</span> <span class="o">-</span> <span class="n">As</span>
+        <span class="n">r_h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Ah</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">r_h</span> <span class="o">=</span> <span class="n">r_x</span> <span class="o">-</span> <span class="n">sapwood_depth</span>
+    
+    <span class="c1"># TODO: add a comment what we actually do and why (A4 Renner 2016)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">r_x</span> <span class="o">-</span> <span class="n">upper_depth</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">r</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">r</span> <span class="o">*</span> <span class="n">r_h</span> <span class="o">+</span> <span class="n">r_h</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">A</span>
+
+
+<div class="viewcode-block" id="sap_flow"><a class="viewcode-back" href="../../../reference/gen_modules/bridget.sap_flow.sap_flow.html#bridget.sap_flow.sap_flow">[docs]</a><span class="k">def</span> <span class="nf">sap_flow</span><span class="p">(</span><span class="n">vs</span><span class="p">,</span> <span class="n">dbh</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">species</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">depths</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bark_depth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sapwood_depth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate sap flow from sap velocity and sapwood area. </span>
+
+<span class="sd">    [Description]</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vs : numpy.array, numpy.float64</span>
+<span class="sd">        Array of (corrected) sap velocity/sap flux density</span>
+<span class="sd">    bark_depth : float</span>
+<span class="sd">        Bark depth in [cm]</span>
+<span class="sd">    dbh : float</span>
+<span class="sd">        Diameter at breast height in [cm]</span>
+<span class="sd">    species : str</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Q : numpy.array</span>
+<span class="sd">        sap flow per tree in [litres/h]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vs</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="n">vs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">vs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vs</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="n">vs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vs</span><span class="p">)</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;edges&#39;</span><span class="p">)</span>
+        <span class="c1"># check that depths are there</span>
+        <span class="k">if</span> <span class="n">depths</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">edges</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;If more than one velocity is given, you need to specify their depths or the profile edges.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">edges</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">depths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">depths</span><span class="p">)</span>
+            <span class="n">edges</span> <span class="o">=</span> <span class="n">depths</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">depths</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+    
+    <span class="c1"># calculate the area first</span>
+    <span class="n">As</span> <span class="o">=</span> <span class="n">sapwood_area</span><span class="p">(</span><span class="n">dbh</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">bark_depth</span><span class="o">=</span><span class="n">bark_depth</span><span class="p">,</span> <span class="n">sapwood_depth</span><span class="o">=</span><span class="n">sapwood_depth</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    
+    <span class="c1"># check inpiut dimnesionality</span>
+    <span class="k">if</span> <span class="n">vs</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">As</span> <span class="o">*</span> <span class="n">vs</span>    
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">__sap_flow_profile</span><span class="p">(</span><span class="n">As</span><span class="p">,</span> <span class="n">vs</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">dbh</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">bark_depth</span><span class="o">=</span><span class="n">bark_depth</span><span class="p">,</span> <span class="n">sapwood_depth</span><span class="o">=</span><span class="n">sapwood_depth</span><span class="p">)</span></div>
+</pre></div>
+
+              </div>
+              
+              
+              <div class='prev-next-bottom'>
+                
+
+              </div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <script src="../../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  <footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2021, bridget contributors.<br/>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br/>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>
