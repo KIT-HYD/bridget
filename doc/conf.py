@@ -35,6 +35,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx_autodoc_typehints',
     'sphinx.ext.intersphinx',
+    'sphinx.ext.viewcode',
     'sphinx.ext.autosummary',
     'sphinx_gallery.gen_gallery',
     'sphinx.ext.todo'
