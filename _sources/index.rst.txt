@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-BridET - Briding the gaps of Evapotranspiration
-===============================================
+BridgET - Bridging the gaps of Evapotranspiration
+=================================================
 
 .. todo::
 
