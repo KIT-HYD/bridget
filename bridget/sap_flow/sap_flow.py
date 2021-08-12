@@ -18,7 +18,8 @@ def heat_pulse_velocity(temperatures, m_c, rho_b, probe_spacing):
     """Calculate heat pulse velocity from temperature measurements of sensors
     using the heat pulse / heat ratio method.  
 
-    [Description]
+    This function calculates the velocity of the inserted heat pulse from 
+    the measured temperatures. (or does it?)
 
     Parameters
     ----------
@@ -54,7 +55,12 @@ def heat_pulse_velocity(temperatures, m_c, rho_b, probe_spacing):
 
 
 def sap_velocity(method='East30_3needle', **kwargs):
-    """
+    """Sap velocity calculation
+    
+    Calculate sap velocity according to the specified method or sensor. At the 
+    moment only the heat ratio method for a 3-needle sensor by East30 is 
+    implemented as an example.     
+     
     """
     if method.lower() == 'East30_3needle':
         return _sap_velocity_East30_3needle(**kwargs)
@@ -122,7 +128,32 @@ def _sap_velocity_East30_3needle(dTu=None, dTd=None, ru=0.006, rd=0.006, **kwarg
 
 
 def sapwood_area(dbh: float, species: str, sapwood_depth=None, bark_depth=None, **kwargs) -> float:
-    """
+    """ Sapwood area calculation
+    
+    This function will calculate the sapwood area, either from measured sapwood
+    depth or using the empirical equation from Gebauer et al. (2008). The bark
+    depth will be needed for the calculation after Gebauer et al. (2008). This
+    can be either a measured value or also empirically calculated. 
+    
+    Reference: 
+    Gebauer, T., Horna, V., and Leuschner, C. (2008). Variability in radial
+    sap flux density patterns and sapwood area among seven cooccurring
+    temperate broad-leaved tree species, Tree Physiol., 28, 1821–1830.
+    
+    Parameters
+    ----------
+    dbh : float
+            diameter at breast height in [cm]
+    species : str
+            species name, can bei either "quercus petraea" or "fagus sylvatica"
+            at this point
+    sapwood depth : ??
+            ??        
+    bark_depth : ?? 
+            measured bark depth in [mm]
+    
+    
+    
     """
     # get the bark depth parameter
     bark_depth = __estimate_bark_depth(dbh, species, bark_depth)
@@ -132,7 +163,7 @@ def sapwood_area(dbh: float, species: str, sapwood_depth=None, bark_depth=None, 
         As = _sapwood_area_gebauer(dbh, species, **kwargs)
     else:
         # As = A_without_bark - A_heartwood
-        r_x = (dbh - bark_depth) / 2
+        r_x = (dbh - bark_depth/10) / 2    #TODO: inserted the /10 here -> check!
         A_without_bark = r_x**2 * np.pi
         A_heartwood = (r_x - sapwood_depth)**2 * np.pi
         
@@ -142,6 +173,8 @@ def sapwood_area(dbh: float, species: str, sapwood_depth=None, bark_depth=None, 
 
 
 def _sapwood_area_gebauer(dbh: float, species: str, **kwargs) -> float:
+    """
+    """
     # TODO: a und b noch aus Literatur bestimmen
     a, b = GEBAUER_FACTORS.get(species)
     As = a * dbh**b
@@ -149,6 +182,32 @@ def _sapwood_area_gebauer(dbh: float, species: str, **kwargs) -> float:
 
 
 def __estimate_bark_depth(dbh: float, species: str, bark_depth=None) -> float:
+    """Estimation of bark depth
+    
+    This function calculates double bark depth according to the empirical 
+    relation in Rössler (2008), if bark depth was not measured. Currently 
+    implemented are the empirical coefficients for Quercus petraea and 
+    Fagus sylvatica. 
+    
+    Reference: 
+    Rässler, 2008. Rindenabzug richtig bemessen, Forstzeitung, 4, p. 21.
+
+    Parameters
+    ----------
+    dbh : float
+            diameter at breast height in [cm]
+    species : str
+            species name, can bei either "quercus petraea" or "fagus sylvatica"
+            at this point
+    bark_depth : ?? 
+            measured bark depth in [mm]
+
+    Returns
+    -------
+    bark_depth : float
+        double bark depth, measured or calculated, in [mm]
+        
+    """ 
     if bark_depth is None and species is None:
         raise ValueError('You need to specify either the species or the bark depth.')
         
@@ -192,7 +251,8 @@ def __sap_flow_profile(As, vs, depths, dbh: float, species: str, bark_depth=None
 def __estimate_last_chunk(dbh: float, species: str, upper_depth, sapwood_depth=None, bark_depth=None) -> float:
     # get bark depth
     bark_depth = __estimate_bark_depth(dbh, species, bark_depth)
-    r_x = (dbh - bark_depth) / 2
+    # TODO: I inserted the /10 to bark depth on 12.8.2021 because we need bark depth in cm -> check!
+    r_x = (dbh - bark_depth/10) / 2
     
     #  Use measured sapwood depth or estimate it
     if sapwood_depth is None:
@@ -212,17 +272,20 @@ def __estimate_last_chunk(dbh: float, species: str, upper_depth, sapwood_depth=N
 def sap_flow(vs, dbh: float, species: str, depths=None, bark_depth=None, sapwood_depth=None, **kwargs):
     """Calculate sap flow from sap velocity and sapwood area. 
 
-    [Description]
+    Calculation of sap flow from sap velocity (profiles) and sapwood area 
+    (increments). 
 
     Parameters
     ----------
     vs : numpy.array, numpy.float64
         Array of (corrected) sap velocity/sap flux density
-    bark_depth : float
-        Bark depth in [cm]
     dbh : float
         Diameter at breast height in [cm]
     species : str
+        species name, can bei either "quercus petraea" or "fagus sylvatica"
+        at this point
+    bark_depth : float
+        Bark depth in [mm]
         
 
     Returns
