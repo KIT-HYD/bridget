@@ -131,3 +131,6 @@ dmypy.json
 # ignore data folder
 data
 .vscode
+
+# docs
+_build
