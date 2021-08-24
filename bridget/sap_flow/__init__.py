@@ -12,8 +12,16 @@ sap flow data.
     :template: module.rst
 
     sap_flow
-    sap_velocity_heat_ratio
-    sap_velocity_granier
+    sap_velocity
+    heat_pulse_velocity
+    sapwood_area
+    _sap_velocity_East30_3needle
 
 """
-from .sap_flow import sap_velocity_heat_ratio, sap_velocity_granier, sap_flow
+from .sap_flow import (
+    heat_pulse_velocity,
+    sap_velocity,
+    _sap_velocity_East30_3needle,
+    sapwood_area,
+    sap_flow
+)
